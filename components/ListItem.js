@@ -13,7 +13,7 @@ const ListItem = (props) => {
       </View>
       <View style={styles.textbox}>
         <Text style={styles.listTitle}>{props.singleMedia.title}</Text>
-        <Text>{props.singleMedia.description}</Text>
+        <Text style={styles.decsiption}>{props.singleMedia.description}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -21,27 +21,34 @@ const ListItem = (props) => {
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    padding: 15,
-    backgroundColor: '#eee',
+    padding: 20,
+    backgroundColor: '#553863',
     borderRadius: 6,
-    marginHorizontal: 10,
-    marginBottom: 5,
+    marginVertical: 10,
   },
   imagebox: {
     flex: 1,
   },
   image: {
     flex: 1,
-    borderRadius: 6,
+    borderRadius: 10,
+    width: 170
   },
   textbox: {
-    flex: 2,
+    flex: 1,
     padding: 10,
+  },
+  decsiption: {
+    flex: 1,
+    position: 'relative',
+    fontSize: 20,
+    color: 'grey',
   },
   listTitle: {
     fontWeight: 'bold',
+    color: 'grey',
     fontSize: 20,
-    paddingBottom: 15,
+    paddingBottom: 10,
   },
 });
 
