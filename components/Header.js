@@ -17,7 +17,6 @@ const Header = () => {
       source={image}
       resizeMode="cover"
       style={styles.bgImage}
-      // imageStyle: {{borderBottomRightRadius: 65}} //why not working?
       />
       <Heart stroke="white" width={32} height={32} style={styles.heart}/>
       <Text style={styles.hello}>Random cat meme background</Text>

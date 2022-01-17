@@ -9,6 +9,7 @@ const ListItem = (props) => {
         <Image
           source={{uri: props.singleMedia.thumbnails.w160}}
           style={styles.image}
+          imageStyle={styles.backImage}
         />
       </View>
       <View style={styles.textbox}>
@@ -32,7 +33,8 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     borderRadius: 10,
-    width: 170
+    width: 170,
+    borderBottomRightRadius: 60
   },
   textbox: {
     flex: 1,
