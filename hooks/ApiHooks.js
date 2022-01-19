@@ -28,7 +28,7 @@ const useMedia = () => {
   };
   // Call loadMedia() only once when the component is loaded
   useEffect(() => {
-    loadMedia(0, 5);
+    loadMedia(0);
   }, []);
 
   return {mediaArray};
