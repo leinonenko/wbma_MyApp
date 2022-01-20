@@ -31,22 +31,10 @@ const Login = ({navigation}) => {
     checkToken();
   }, []);
 
-  const logIn = async () => {
-    // hard code your username and password:
-    const data = {username: 'pavlol', password: 'asdf1234'};
-    try {
-      const userData = await postLogin(data);
-      await AsyncStorage.setItem('userToken', userData.token);
-      setIsLoggedIn(true);
-      // navigation.navigate('Tabs');
-    } catch (error) {
-      console.error(error);
-    }
-  };
   return (
     <View style={styles.container}>
       <Text>Login</Text>
-      <LoginForm navigation={navigation}/>
+      <LoginForm />
       <Button title="Sign in!" onPress={logIn} />
     </View>
   );
