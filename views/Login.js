@@ -1,16 +1,16 @@
 import React, {useContext, useEffect} from 'react';
-import {StyleSheet, View, Text, Button} from 'react-native';
+import {StyleSheet, View, Text, Button, Platform, Keyboard} from 'react-native';
 import PropTypes from 'prop-types';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useLogin, useUser} from '../hooks/ApiHooks';
-import {getUserByToken} from '../hooks/ApiHooks'
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
+import {KeyboardAvoidingView} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 
 const Login = ({navigation}) => {
-  const {setIsLoggedIn} = useContext(MainContext);
-  const {postLogin} = useLogin();
+  const {setIsLoggedIn , setUser} = useContext(MainContext);
   const {getUserByToken} = useUser();
 
   const checkToken = async () => {
@@ -22,6 +22,7 @@ const Login = ({navigation}) => {
     try {
       const userData = await getUserByToken(userToken);
       console.log('checkToken', userData)
+      setUser(userData)
       setIsLoggedIn(true);
     } catch (error) {
       console.log(error);
@@ -33,12 +34,18 @@ const Login = ({navigation}) => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      onPress={() => Keyboard.dismiss()}
+      style={{flex: 1}}
+      activeOpacity={1}
+    >
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : ''} style={styles.container}>
       <Text>Login</Text>
       <LoginForm />
       <RegisterForm />
       <Button title="Sign in!" />
-    </View>
+    </KeyboardAvoidingView>
+      </TouchableOpacity>
   );
 };
 

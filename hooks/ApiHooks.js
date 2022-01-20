@@ -93,7 +93,7 @@ const useUser = () => {
       if (response.ok) {
         return userData;
       } else {
-        throw new Error(userData.message);
+        throw new Error(userData.message + ': ' + userData.error);
       }
     } catch (error) {
       throw new Error(error.message);

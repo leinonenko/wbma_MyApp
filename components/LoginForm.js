@@ -6,7 +6,7 @@ import {MainContext} from '../contexts/MainContext';
 import {useLogin} from '../hooks/ApiHooks';
 
 const LoginForm = () => {
-  const {setIsLoggedIn} = useContext(MainContext);
+  const {setIsLoggedIn, setUser} = useContext(MainContext);
   const {postLogin} = useLogin();
   const {
     control,
@@ -23,6 +23,7 @@ const LoginForm = () => {
     try {
       const userData = await postLogin(data);
       await AsyncStorage.setItem('userToken', userData.token);
+      setUser(userData.user);
       setIsLoggedIn(true);
       // navigation.navigate('Tabs');
     } catch (error) {
@@ -39,7 +40,7 @@ const LoginForm = () => {
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            style={{borderWidth: 1}}
+            style={{borderWidth: 1, padding: 10}}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
@@ -58,7 +59,7 @@ const LoginForm = () => {
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            style={{borderWidth: 1}}
+            style={{borderWidth: 1, padding: 10}}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
