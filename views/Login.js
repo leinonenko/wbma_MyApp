@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useLogin, useUser} from '../hooks/ApiHooks';
 import {getUserByToken} from '../hooks/ApiHooks'
 import LoginForm from '../components/LoginForm';
+import RegisterForm from '../components/RegisterForm';
 
 const Login = ({navigation}) => {
   const {setIsLoggedIn} = useContext(MainContext);
@@ -35,7 +36,8 @@ const Login = ({navigation}) => {
     <View style={styles.container}>
       <Text>Login</Text>
       <LoginForm />
-      <Button title="Sign in!" onPress={logIn} />
+      <RegisterForm />
+      <Button title="Sign in!" />
     </View>
   );
 };
