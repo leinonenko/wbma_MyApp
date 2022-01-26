@@ -86,5 +86,15 @@ const useUser = () => {
   };
   return {getUserByToken, postUser};
 };
+const useTag = () => {
+  const postTag = async data => {
+    // TODO: implement later
+  };
 
-export {useMedia, useLogin, useUser};
+  const getFilesByTag = async (tag) => {
+    return await doFetch(baseUrl + 'tags/'+ tag);
+  };
+  return {postTag, getFilesByTag};
+};
+
+export {useMedia, useLogin, useUser, useTag};

@@ -1,14 +1,38 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {StyleSheet, SafeAreaView, Text, Button} from 'react-native';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Image} from 'react-native';
+import {uploadsUrl} from '../utils/variables';
+import {useTag} from '../hooks/ApiHooks';
 
 const Profile = () => {
   const {setIsLoggedIn, user} = useContext(MainContext);
+  const [avatar, setAvatar] = useState('http://placekitten.com/640');
+  const {getFilesByTag} = useTag();
   console.log('Profile', user);
+
+  const fetchAvatar = async () => {
+    try {
+      const avatarArray = await getFilesByTag('avatar_' + user.user_id).pop();
+      const avatar = avatarArray.pop();
+      setAvatar(uploadsUrl + avatar.filename);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+  useEffect(() => {
+    fetchAvatar();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <Text>Profile</Text>
+      <Image
+        source={{uri: avatar}}
+        style={{width: '80%', height: '50%'}}
+        resizeMode="contain"
+      />
       <Text>{user.username}</Text>
       <Text>{user.email}</Text>
       <Text>{user.full_name}</Text>
