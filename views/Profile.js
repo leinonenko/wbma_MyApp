@@ -21,8 +21,27 @@ const Profile = () => {
       console.error(error.message);
     }
   };
+
+  //quick 'n' dirty testing postTag
+  //not needed yet
+  const postAvatar = async (mediaId) => {
+    const data = {
+      file_id: mediaId,
+      tag: 'avatar_' + user.user_id
+    };
+    try {
+      const result = await postTag(data, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyOCwidXNlcm5hbWUiOiJwYXZsb2wiLCJlbWFpbCI6InBhdmxvbEBtZXRyb3BvbGlhLmZpIiwiZnVsbF9uYW1lIjoiUGF2bG8gTGVpbm9uZW4iLCJpc19hZG1pbiI6bnVsbCwidGltZV9jcmVhdGVkIjoiMjAyMi0wMS0xMFQxMzo0MDoxMS4wMDBaIiwiaWF0IjoxNjQzMTgxNDEwLCJleHAiOjE2NDMyNjc4MTB9.go5EM6Q4_59slFR6WEikYEl8RGr7TKm5ov9X50rA-00')
+      console.log(result)
+    } catch (error) {
+      console.error(error.message);
+    }
+
+  };
+
+
   useEffect(() => {
     fetchAvatar();
+    postAvatar();
   }, []);
 
   return (
