@@ -18,6 +18,7 @@ const RegisterForm = () => {
       email: '',
       full_name: '',
     },
+    mode: 'onBlur',
   });
 
   const onSubmit = async (data) => {
@@ -30,12 +31,16 @@ const RegisterForm = () => {
     }
   };
 
+
   return (
     <View>
       <Controller
         control={control}
         rules={{
           required: true,
+          validate: async (value) => {
+            // TODO: call checkUsername, if username not available return 'Username is already taken' else return true
+          },
         }}
         render={({field: {onChange, onBlur, value}}) => (
           <Input
