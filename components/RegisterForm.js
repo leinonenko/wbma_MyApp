@@ -5,7 +5,7 @@ import {useUser} from '../hooks/ApiHooks';
 import {Input, Button, Text} from 'react-native-elements';
 
 const RegisterForm = () => {
-  const {postUser} = useUser();
+  const {postUser, checkUsername} = useUser();
 
   const {
     control,
@@ -31,7 +31,6 @@ const RegisterForm = () => {
     }
   };
 
-
   return (
     <View>
       <Controller
@@ -39,7 +38,16 @@ const RegisterForm = () => {
         rules={{
           required: true,
           validate: async (value) => {
-            // TODO: call checkUsername, if username not available return 'Username is already taken' else return true
+            try {
+              const available = await checkUsername(value);
+              if(available) {
+                return true;
+              } else {
+                return 'Username us already exists';
+              }
+            } catch (error) {
+              throw new Error(error.message);
+            }
           },
         }}
         render={({field: {onChange, onBlur, value}}) => (
@@ -49,11 +57,11 @@ const RegisterForm = () => {
             value={value}
             autoCapitalize="none"
             placeholder="Username"
+            errorMessage={errors.username && errors.username.message}
           />
         )}
         name="username"
       />
-      {errors.username && <Text>This is required.</Text>}
 
       <Controller
         control={control}
