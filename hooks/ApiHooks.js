@@ -1,24 +1,26 @@
 import {useEffect, useState} from 'react';
 import {baseUrl} from '../utils/variables';
 
-const doFetch = async (url, options) => {
+const doFetch = async (url, options = {}) => {
   try {
     const response = await fetch(url, options);
     const json = await response.json();
     if (response.ok) {
       return json;
     } else {
-      const message = json.error ? `${json.message}: ${json.error}` : json.message;
-      throw new Error(json.message || response.statusText);
+      const message = json.error
+        ? `${json.message}: ${json.error}`
+        : json.message;
+      throw new Error(message || response.statusText);
     }
   } catch (error) {
     throw new Error(error.message);
   }
-}
+};
 
 const useMedia = () => {
   const [mediaArray, setMediaArray] = useState([]);
-  const loadMedia = async (start = 0, limit = 20) => {
+  const loadMedia = async (start = 0, limit = 10) => {
     try {
       const response = await fetch(
         `${baseUrl}media?start=${start}&limit=${limit}`
@@ -59,8 +61,9 @@ const useLogin = () => {
       },
       body: JSON.stringify(userCredentials),
     };
-    return doFetch(baseUrl + 'login', options)
+    return await doFetch(baseUrl + 'login', options);
   };
+
   return {postLogin};
 };
 
@@ -70,8 +73,7 @@ const useUser = () => {
       method: 'GET',
       headers: {'x-access-token': token},
     };
-    const userData = await doFetch(baseUrl + 'users/user', options);
-    return userData;
+    return await doFetch(baseUrl + 'users/user', options);
   };
 
   const postUser = async (data) => {
@@ -84,10 +86,17 @@ const useUser = () => {
     };
     return await doFetch(baseUrl + 'users', options);
   };
-  return {getUserByToken, postUser};
+
+  const checkUsername = async (username) => {
+    const result = await doFetch(baseUrl + 'users/username/' + username);
+    return result.available;
+  };
+
+  return {getUserByToken, postUser, checkUsername};
 };
+
 const useTag = () => {
-  const postTag = async (tagData,token) => {
+  const postTag = async (tagData, token) => {
     const options = {
       method: 'POST',
       headers: {
@@ -100,7 +109,7 @@ const useTag = () => {
   };
 
   const getFilesByTag = async (tag) => {
-    return await doFetch(baseUrl + 'tags/'+ tag);
+    return await doFetch(baseUrl + 'tags/' + tag);
   };
 
   return {postTag, getFilesByTag};
