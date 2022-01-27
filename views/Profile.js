@@ -1,20 +1,20 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {StyleSheet, SafeAreaView, Text, Button} from 'react-native';
+import {StyleSheet, ActivityIndicator} from 'react-native';
+import {Card, Text, Button, ListItem, Avatar} from 'react-native-elements';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Image} from 'react-native';
-import {uploadsUrl} from '../utils/variables';
 import {useTag} from '../hooks/ApiHooks';
+import {uploadsUrl} from '../utils/variables';
 
 const Profile = () => {
   const {setIsLoggedIn, user} = useContext(MainContext);
   const [avatar, setAvatar] = useState('http://placekitten.com/640');
-  const {getFilesByTag} = useTag();
+  const {postTag, getFilesByTag} = useTag();
   console.log('Profile', user);
 
   const fetchAvatar = async () => {
     try {
-      const avatarArray = await getFilesByTag('avatar_' + user.user_id).pop();
+      const avatarArray = await getFilesByTag('avatar_' + user.user_id);
       const avatar = avatarArray.pop();
       setAvatar(uploadsUrl + avatar.filename);
     } catch (error) {
@@ -22,39 +22,48 @@ const Profile = () => {
     }
   };
 
-  //quick 'n' dirty testing postTag
-  //not needed yet
-  const postAvatar = async (mediaId) => {
+  // quick'n'dirty testing postTag with hardcoded token
+  // this is not needed yet and should be called only when you want to set
+  // a new avatar in the remote API
+  const createAvatar = async (mediaId) => {
     const data = {
       file_id: mediaId,
-      tag: 'avatar_' + user.user_id
+      tag: 'avatar_' + user.user_id,
     };
     try {
-      const result = await postTag(data, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyOCwidXNlcm5hbWUiOiJwYXZsb2wiLCJlbWFpbCI6InBhdmxvbEBtZXRyb3BvbGlhLmZpIiwiZnVsbF9uYW1lIjoiUGF2bG8gTGVpbm9uZW4iLCJpc19hZG1pbiI6bnVsbCwidGltZV9jcmVhdGVkIjoiMjAyMi0wMS0xMFQxMzo0MDoxMS4wMDBaIiwiaWF0IjoxNjQzMTgxNDEwLCJleHAiOjE2NDMyNjc4MTB9.go5EM6Q4_59slFR6WEikYEl8RGr7TKm5ov9X50rA-00')
-      console.log(result)
+      const result = await postTag(
+        data,
+        'correct token should be here to use this'
+      );
+      console.log(result);
     } catch (error) {
       console.error(error.message);
     }
-
   };
-
 
   useEffect(() => {
     fetchAvatar();
-    postAvatar();
+    // createAvatar(95); this was just for testing
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>Profile</Text>
-      <Image
+    <Card>
+      <Card.Title>
+        <Text h1>{user.username}</Text>
+      </Card.Title>
+      <Card.Image
         source={{uri: avatar}}
-        style={{width: '80%', height: '50%'}}
-        resizeMode="contain"
+        style={styles.image}
+        PlaceholderContent={<ActivityIndicator />}
       />
-      <Text>{user.username}</Text>
-      <Text>{user.email}</Text>
-      <Text>{user.full_name}</Text>
+      <ListItem>
+        <Avatar icon={{name: 'email', color: 'black'}} />
+        <Text>{user.email}</Text>
+      </ListItem>
+      <ListItem>
+        <Avatar icon={{name: 'user', type: 'font-awesome', color: 'black'}} />
+        <Text>{user.full_name}</Text>
+      </ListItem>
       <Button
         title="Log out!"
         onPress={async () => {
@@ -62,18 +71,12 @@ const Profile = () => {
           setIsLoggedIn(false);
         }}
       />
-    </SafeAreaView>
+    </Card>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 40,
-  },
+  image: {width: '100%', height: undefined, aspectRatio: 1},
 });
 
 export default Profile;
