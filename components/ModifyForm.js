@@ -1,12 +1,16 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import {Controller, useForm} from 'react-hook-form';
+import {Button, Input} from 'react-native-elements';
 import {Alert, View} from 'react-native';
-import {useForm, Controller} from 'react-hook-form';
 import {useUser} from '../hooks/ApiHooks';
-import {Input, Button, Text} from 'react-native-elements';
-import PropTypes from 'prop-types';
+import {MainContext} from '../contexts/MainContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const RegisterForm = ({setFormToggle}) => {
-  const {postUser, checkUsername} = useUser();
+const ModifyForm = () => {
+
+  const {user, setUser} = useContext(MainContext);
+
+  const  {checkUsername, putUser} = useUser();
 
   const {
     control,
@@ -14,41 +18,45 @@ const RegisterForm = ({setFormToggle}) => {
     formState: {errors},
   } = useForm({
     defaultValues: {
-      username: '',
+      username: user.username,
       password: '',
       confirmPassword: '',
-      email: '',
-      full_name: '',
+      email: user.email,
+      full_name: user.full_name,
     },
     mode: 'onBlur',
   });
+
 
   const onSubmit = async (data) => {
     console.log(data);
     try {
       delete data.confirmPassword;
-      const userData = await postUser(data);
-      console.log('register onSubmit', userData);
-      if (userData) {
-        Alert.alert('Success', 'User created successfully.');
-        setFormToggle(true);
+      const userToken = await AsyncStorage.getItem('userToken');
+      const userData = await putUser(data, userToken);
+      if (userData){
+        Alert.alert('Success', userData.message)
+        delete data.password;
+        setUser(data);
+        navigation.navigate('Profile');
       }
+      console.log('modify onSubmit', userData);
     } catch (error) {
       console.error(error);
     }
   };
+
 
   return (
     <View>
       <Controller
         control={control}
         rules={{
-          required: {value: true, message: 'This is required!'},
           minLength: {value: 3, message: 'Username has to be at least 3 char'},
           validate: async (value) => {
             try {
               const available = await checkUsername(value);
-              if(available) {
+              if(available || user.username === value) {
                 return true;
               } else {
                 return 'Username us already exists';
@@ -70,14 +78,9 @@ const RegisterForm = ({setFormToggle}) => {
         )}
         name="username"
       />
-
       <Controller
         control={control}
         rules={{
-          required: {value: true, message: 'This is required!'},
-          /*pattern: {
-            value: /(?=.*[\p{Lu}])(?=.*[0-9]).{8,}/u,
-            message:'Min 8, Uppercase, Numbered'} */
           minLength: {value: 5, message: 'Password has to be at least 5 char'},
         }}
         render={({field: {onChange, onBlur, value}}) => (
@@ -97,7 +100,6 @@ const RegisterForm = ({setFormToggle}) => {
       <Controller
         control={control}
         rules={{
-          required: {value: true, message: 'This is required!'},
           validate: (value) => {
             const {password} = getValues();
             if (value === password) {
@@ -124,7 +126,6 @@ const RegisterForm = ({setFormToggle}) => {
       <Controller
         control={control}
         rules={{
-          required: true,
           pattern: {
             value: /^[a-z0-9_-]+(\.[a-z0-9_-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/,  // \S+@\S+\.\S+$ as well
             message: 'Not a email format',
@@ -166,8 +167,4 @@ const RegisterForm = ({setFormToggle}) => {
   );
 };
 
-RegisterForm.propTypes = {
-  setFormToggle: PropTypes.func,
-};
-
-export default RegisterForm;
+export default ModifyForm;
