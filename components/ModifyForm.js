@@ -6,16 +6,15 @@ import {useUser} from '../hooks/ApiHooks';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ModifyForm = () => {
+const ModifyForm = ({navigation}) => {
 
+  const {checkUsername, putUser} = useUser();
   const {user, setUser} = useContext(MainContext);
-
-  const  {checkUsername, putUser} = useUser();
-
   const {
     control,
     handleSubmit,
     formState: {errors},
+    getValues,
   } = useForm({
     defaultValues: {
       username: user.username,
@@ -32,6 +31,9 @@ const ModifyForm = () => {
     console.log(data);
     try {
       delete data.confirmPassword;
+      if (data.password === '') {
+        delete data.password;
+      }
       const userToken = await AsyncStorage.getItem('userToken');
       const userData = await putUser(data, userToken);
       if (userData){
