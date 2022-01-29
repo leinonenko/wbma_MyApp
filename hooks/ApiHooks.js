@@ -97,7 +97,7 @@ const useUser = () => {
       body: JSON.stringify(data),
     };
     return await doFetch(baseUrl + 'users', options);
-  }
+  };
 
   const checkUsername = async (username) => {
     const result = await doFetch(baseUrl + 'users/username/' + username);
