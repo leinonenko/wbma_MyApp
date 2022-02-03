@@ -2,14 +2,13 @@ import React, {useContext, useState} from 'react';
 import PropTypes from 'prop-types';
 import {
   Alert,
-  Button,
   Image,
   ImagePickerIOS,
   ScrollView,
   StyleSheet,
 } from 'react-native';
 import {Controller, useForm} from 'react-hook-form';
-import {Card, Input, Text} from 'react-native-elements';
+import {Button, Card, Input, Text} from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {uploadsUrl} from '../utils/variables';
@@ -20,7 +19,7 @@ const Upload = ({navigation}) => {
   const [image, setImage] = useState('https://place-hold.it/300x200&text=Choose');
   const [type, setType] = useState('');
   const [imageSelected, setImageSelected] = useState(false);
-  const {postMedia} = useMedia();
+  const {postMedia, loading} = useMedia();
   const {update, setUpdate} = useContext(MainContext);
 
   const {
@@ -110,7 +109,7 @@ const Upload = ({navigation}) => {
           )}
           name="title"
         />
-        {/*errors.username && <Text>This is required.</Text>*/}
+        {/*errors.title && <Text>This is required.</Text>*/}
 
         <Controller
           control={control}
@@ -127,9 +126,10 @@ const Upload = ({navigation}) => {
             />
           )}
           name="description"
+          /*errors.description && <Text>This is required.</Text>*/
         />
-        <Button title="Choose image" onPress={pickImage}/>
-        <Button title="Upload" onPress={handleSubmit(onSubmit)}/>
+        <Button style={styles.buttons} title="Choose image" onPress={pickImage}/>
+        <Button style={styles.buttons} loading={loading} title="Upload" onPress={handleSubmit(onSubmit)}/>
       </Card>
     </ScrollView>
   );
@@ -142,7 +142,8 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     marginBottom: 15,
     resizeMode: 'contain',
-  }
+  },
+  buttons: {margin: 5}
 });
 
 Upload.propTypes = {
