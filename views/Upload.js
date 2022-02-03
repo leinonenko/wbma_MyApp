@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useCallback ,useContext, useState} from 'react';
 import PropTypes from 'prop-types';
 import {
   Alert,
@@ -11,21 +11,25 @@ import {Controller, useForm} from 'react-hook-form';
 import {Button, Card, Input, Text} from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {uploadsUrl} from '../utils/variables';
-import {useMedia} from '../hooks/ApiHooks';
+import {appId, uploadsUrl} from '../utils/variables';
+import {useMedia, useTag} from '../hooks/ApiHooks';
 import {MainContext} from '../contexts/MainContext';
+import {useFocusEffect} from '@react-navigation/native';
+import {Video} from 'expo-av';
 
 const Upload = ({navigation}) => {
   const [image, setImage] = useState('https://place-hold.it/300x200&text=Choose');
-  const [type, setType] = useState('');
+  const [type, setType] = useState('image');
   const [imageSelected, setImageSelected] = useState(false);
   const {postMedia, loading} = useMedia();
+  const {postTag} = useTag();
   const {update, setUpdate} = useContext(MainContext);
 
   const {
     control,
     handleSubmit,
     formState: {errors},
+    setValue,
   } = useForm({
     defaultValues: {
       title: '',
@@ -48,6 +52,19 @@ const Upload = ({navigation}) => {
     }
   };
 
+  const reset = () => {
+    setImage('https://place-hold.it/300x200&text=Choose');
+    setImageSelected(false);
+    setValue('title', '');
+    setValue('description', '');
+    setType('image');
+  };
+
+  useFocusEffect(useCallback(() => {
+      return () => reset();
+    }, [])
+  );
+
   const onSubmit = async (data) => {
     if (!imageSelected) {
       Alert.alert('Please, select a file');
@@ -69,11 +86,15 @@ const Upload = ({navigation}) => {
       const token = await AsyncStorage.getItem('userToken');
       const response = await postMedia(formData, token);
       console.log('upload response', response);
+      const tagResponse = (await postTag(
+      {file_id:response.file_id, tag: appId}, token
+      ));
+      tagResponse &&
       Alert.alert('File', 'uploaded', [
         {
           text: 'Ok',
           onPress: () => {
-            // TODO: clear the form values here after submission
+            reset()
             setUpdate(update + 1);
             navigation.navigate('Home');
           },
@@ -85,15 +106,29 @@ const Upload = ({navigation}) => {
     }
   };
 
-  console.log('loading', loading);
+  console.log('type', type);
   return (
     <ScrollView>
       <Card>
-        <Card.Image
-        source={{uri: image}}
-        style={styles.image}
-        >
-        </Card.Image>
+        {type === 'image' ? (
+          <Card.Image
+            source={{uri: image}}
+            style={styles.image}
+            onPress={pickImage}
+          >
+          </Card.Image>
+        ) : (
+          <Video
+            source={{uri: image}}
+            style={styles.image}
+            useNativeControls={true}
+            resizeMode="cover"
+            onError={(err) => {
+              console.error('video', err);
+            }}
+          />
+        )}
+
         <Controller
           control={control}
           rules={{
@@ -133,6 +168,7 @@ const Upload = ({navigation}) => {
         />
         <Button style={styles.buttons} title="Choose image" onPress={pickImage}/>
         <Button style={styles.buttons} disabled={!imageSelected} loading={loading} title="Upload" onPress={handleSubmit(onSubmit)}/>
+        <Button style={styles.buttons} title="Reset" onPress={reset}/>
       </Card>
     </ScrollView>
   );
