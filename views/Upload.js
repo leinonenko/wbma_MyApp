@@ -85,6 +85,7 @@ const Upload = ({navigation}) => {
     }
   };
 
+  console.log('loading', loading);
   return (
     <ScrollView>
       <Card>
@@ -105,6 +106,7 @@ const Upload = ({navigation}) => {
               value={value}
               autoCapitalize="none"
               placeholder="Title"
+              errorMessage={errors.title && 'This is required.'}
             />
           )}
           name="title"
@@ -123,13 +125,14 @@ const Upload = ({navigation}) => {
               value={value}
               autoCapitalize="none"
               placeholder="Description"
+              errorMessage={errors.description && 'This is required.'}
             />
           )}
           name="description"
           /*errors.description && <Text>This is required.</Text>*/
         />
         <Button style={styles.buttons} title="Choose image" onPress={pickImage}/>
-        <Button style={styles.buttons} loading={loading} title="Upload" onPress={handleSubmit(onSubmit)}/>
+        <Button style={styles.buttons} disabled={!imageSelected} loading={loading} title="Upload" onPress={handleSubmit(onSubmit)}/>
       </Card>
     </ScrollView>
   );

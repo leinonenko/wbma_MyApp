@@ -23,7 +23,7 @@ const useMedia = () => {
   const [mediaArray, setMediaArray] = useState([]);
   const [loading, setLoading] = useState(false);
   const {update} = useContext(MainContext);
-  const loadMedia = async (start = 0, limit = 10) => {
+  const loadMedia = async (start = 0, limit = 20) => {
     setLoading(true);
     try {
       const response = await fetch(
@@ -43,15 +43,17 @@ const useMedia = () => {
       );
       setMediaArray(media);
       // console.log(mediaArray);
-      setLoading(false);
+      media && setLoading(false);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
   // Call loadMedia() only once when the component is loaded
   // Or when the update state (MainCOntext)
   useEffect(() => {
-    loadMedia(0, 5);
+    loadMedia();
   }, [update]);
 
   const postMedia= async (formData, token) => {
@@ -64,8 +66,13 @@ const useMedia = () => {
       },
       body: formData,
     };
-    setLoading(false);
-    return await doFetch(baseUrl + 'media', options);
+
+    const result = await await doFetch(baseUrl + 'media', options);
+    /*if (result) {
+      setLoading(false);
+    }*/
+    result && setLoading(true);
+    return result;
   };
 
   return {mediaArray, postMedia, loading};
