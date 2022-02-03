@@ -9,6 +9,7 @@ import Login from '../views/Login';
 import {MainContext} from '../contexts/MainContext';
 import {Icon} from 'react-native-elements';
 import ModifyUser from '../views/ModifyUser';
+import Upload from '../views/Upload';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -35,6 +36,7 @@ const TabScreen = () => {
       })}
     >
       <Tab.Screen name="Home" component={Home}/>
+      <Tab.Screen name="Upload" component={Upload}/>
       <Tab.Screen name="Profile" component={Profile}/>
     </Tab.Navigator>
   );
@@ -52,19 +54,17 @@ const StackScreen = () => {
   component={TabScreen}
   options={{headerShown: false}}
   />
-          <Stack.Screen name="Single" component={Single}>
-
-          </Stack.Screen>
+          <Stack.Screen name="Single" component={Single}/>
           <Stack.Screen
-            name="Modify user"
-            component={ModifyUser}
+  name="Modify user"
+  component={ModifyUser}
   />
         </>
       ) : (
         <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{headerShown: false}}
+  name="Login"
+  component={Login}
+  options={{headerShown: false}}
   />
       )}
     </Stack.Navigator>

@@ -1,5 +1,6 @@
-import {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {baseUrl} from '../utils/variables';
+import {MainContext} from '../contexts/MainContext';
 
 const doFetch = async (url, options = {}) => {
   try {
@@ -20,6 +21,7 @@ const doFetch = async (url, options = {}) => {
 
 const useMedia = () => {
   const [mediaArray, setMediaArray] = useState([]);
+  const {update} = useContext(MainContext);
   const loadMedia = async (start = 0, limit = 10) => {
     try {
       const response = await fetch(
@@ -44,11 +46,24 @@ const useMedia = () => {
     }
   };
   // Call loadMedia() only once when the component is loaded
+  // Or when the update state (MainCOntext)
   useEffect(() => {
     loadMedia(0, 5);
-  }, []);
+  }, [update]);
 
-  return {mediaArray};
+  const postMedia= async (formData, token) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'x-access-token': token,
+        'Content-Type': ',ultipart/form-data',
+      },
+      body: formData,
+    };
+    return await doFetch(baseUrl + 'media', options);
+  };
+
+  return {mediaArray, postMedia};
 };
 
 const useLogin = () => {
