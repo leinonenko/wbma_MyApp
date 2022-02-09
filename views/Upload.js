@@ -166,7 +166,7 @@ const Upload = ({navigation}) => {
           name="description"
           /*errors.description && <Text>This is required.</Text>*/
         />
-        <Button style={styles.buttons} title="Choose image" onPress={pickImage}/>
+        <Button style={styles.buttons} title="Choose file" onPress={pickImage}/>
         <Button style={styles.buttons} disabled={!imageSelected} loading={loading} title="Upload" onPress={handleSubmit(onSubmit)}/>
         <Button style={styles.buttons} title="Reset" onPress={reset}/>
       </Card>
