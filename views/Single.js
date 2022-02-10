@@ -63,7 +63,6 @@ const Single = ({route}) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const response = await postFavourite(file.file_id, token);
-      console.log('createFavourite', response)
       response && setUserLike(false);
     } catch (error) {
       //TODO: if user already liked?
@@ -124,24 +123,26 @@ const Single = ({route}) => {
         <ListItem>
           <Avatar source={{uri: avatar}} />
           <Text>{owner.username}</Text>
-          <ListItem>
-            <Text>Likes count: {likes.length}</Text>
-            <Button
-              title="Like"
-              disabled={userLike}
-              onPress={() => {
-                createFavourite();
-                //fetchLikes();
-              }}
-            />
-            <Button
-              title="Dislike"
-              disabled={userLike}
-              onPress={() => {
-                removeFavourite()
-              }}
-            />
-          </ListItem>
+        </ListItem>
+        <ListItem>
+          <Text>Likes count: {likes.length}</Text>
+          <Button
+            title="Like"
+            style={styles.likes}
+            disabled={userLike}
+            onPress={() => {
+              createFavourite();
+              //fetchLikes();
+            }}
+          />
+          <Button
+            title="Dislike"
+            style={styles.likes}
+            disabled={userLike}
+            onPress={() => {
+              removeFavourite()
+            }}
+          />
         </ListItem>
       </Card>
     </ScrollView>
@@ -157,6 +158,9 @@ const styles = StyleSheet.create({
   description: {
     marginBottom: 10,
   },
+  likes: {
+    margin: 5
+  }
 });
 
 Single.propTypes = {

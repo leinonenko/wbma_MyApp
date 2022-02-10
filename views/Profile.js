@@ -35,7 +35,7 @@ const Profile = ({navigation}) => {
     try {
       const result = await postTag(
         data,
-        'correct token should be here to use this'
+        'correct token should be here to use this',
       );
       console.log(result);
     } catch (error) {
@@ -57,14 +57,14 @@ const Profile = ({navigation}) => {
         <Card.Image
           source={{uri: avatar}}
           style={styles.image}
-          PlaceholderContent={<ActivityIndicator />}
+          PlaceholderContent={<ActivityIndicator/>}
         />
         <ListItem>
-          <Avatar icon={{name: 'email', color: 'black'}} />
+          <Avatar icon={{name: 'email', color: 'black'}}/>
           <Text>{user.email}</Text>
         </ListItem>
         <ListItem>
-          <Avatar icon={{name: 'user', type: 'font-awesome', color: 'black'}} />
+          <Avatar icon={{name: 'user', type: 'font-awesome', color: 'black'}}/>
           <Text>{user.full_name}</Text>
         </ListItem>
         <Button
@@ -75,24 +75,33 @@ const Profile = ({navigation}) => {
             setIsLoggedIn(false);
           }}
         />
-        <Button title="Modify user"
-                style={styles.buttons}
-                onPress={() => {
-                  navigation.navigate('Modify user');
+        <Button
+          title="Modify user"
+          style={styles.buttons}
+          onPress={() => {
+            navigation.navigate('Modify user');
                 }}
         />
+        <Button
+        title="My files"
+        style={styles.buttons}
+        onPress={() => {
+          navigation.navigate('My files');
+        }}
+        >
+        </Button>
       </Card>
     </ScrollView>
   );
 };
 
 Profile.propTypes = {
-  navigation: PropTypes.object
-}
+  navigation: PropTypes.object,
+};
 
 const styles = StyleSheet.create({
   image: {width: '100%', height: undefined, aspectRatio: 1},
-  buttons: {margin: 5}
+  buttons: {margin: 5},
 });
 
 export default Profile;
