@@ -105,7 +105,7 @@ const useMedia = (myFilesOnly) => {
       },
       body: JSON.stringify(data),
     };
-    return await doFetch(baseUrl + `media/${fileId}`, options);
+    return await doFetch(`${baseUrl}media/${fileId}`, options);
   };
 
   const deleteMedia = async (fileId, token) => {
@@ -113,7 +113,7 @@ const useMedia = (myFilesOnly) => {
       method: 'DELETE',
       headers: {'x-access-token': token},
     };
-    return await doFetch(`${baseUrl}users/${fileId}`, options);
+    return await doFetch(`${baseUrl}media/${fileId}`, options);
   };
 
   return {mediaArray, postMedia, loading, putMedia, deleteMedia};

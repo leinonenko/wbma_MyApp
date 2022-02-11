@@ -9,9 +9,9 @@ import {MainContext} from '../contexts/MainContext';
 
 const Modify = ({navigation, route}) => {
   const {file} = route.params;
-  console.log('Modify', file);
   const {putMedia, loading} = useMedia();
   const {update, setUpdate} = useContext(MainContext);
+
 
   const {
     control,

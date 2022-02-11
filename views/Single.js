@@ -6,6 +6,7 @@ import {Avatar, Card, ListItem, Text, Button} from 'react-native-elements';
 import {Video} from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useFavorite, useFavourite, useTag, useUser} from '../hooks/ApiHooks';
+import {MainContext} from '../contexts/MainContext';
 
 const Single = ({route}) => {
   // console.log('route:', route);
@@ -18,7 +19,8 @@ const Single = ({route}) => {
   const [owner, setOwner] = useState({username: 'fetching...'});
   const [avatar, setAvatar] = useState('http://placekitten.com/180')
   const [likes, setLikes] = useState([]);
-  const [userLike, setUserLike] = useState(false)
+  const [userLike, setUserLike] = useState(false);
+  const {user} = useContext(MainContext);
 
   const fetchOwner = async () => {
     try {
@@ -49,13 +51,12 @@ const Single = ({route}) => {
       const likesData = await getFavouritesByFileId(file.file_id);
       setLikes(likesData);
       //TODO check if user id of logged in user is included in data and set state userLike accrdingly
-      likesData.forEach(like => {
-        if (like.user_id === user.user_id) {
-          setUserLike(true);
-        }
-      })
+      likesData.forEach((like) => {
+        like.user_id === user.user_id && setUserLike(true);
+      });
     } catch (error) {
-      console.log(error.message);
+      // TODO: how should user be notified?
+      console.error('fetchLikes() error', error);
     }
   };
 
@@ -63,7 +64,7 @@ const Single = ({route}) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const response = await postFavourite(file.file_id, token);
-      response && setUserLike(false);
+      response && setUserLike(true);
     } catch (error) {
       //TODO: if user already liked?
       console.error('createFavourite() error', error)
@@ -73,7 +74,8 @@ const Single = ({route}) => {
   const removeFavourite = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      await deleteFavourite(file.file_id, token);
+      const response = await deleteFavourite(file.file_id, token);
+      response && setUserLike(false);
     } catch (error) {
       //TODO: if user not liked yet?
       console.error('removeFavourite() error', error)
